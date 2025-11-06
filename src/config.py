@@ -1,0 +1,5 @@
+WORLDPOP_BASE_URL = "https://data.worldpop.org/GIS/AgeSex_structures/Global_2015_2030_Constrained/2025"
+GADM_BASE_URL = "https://geodata.ucdavis.edu/gadm/gadm4.1/json"
+RESOLUTION_PATH = "1km_ua/constrained"
+CACHE_DIR = "data"
+PROCESSED_DATA_FILE = "data/processed_population.parquet"

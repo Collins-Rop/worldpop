@@ -16,7 +16,7 @@
       ]
     }
   },
-  "updateContentCommand": "if [ -f packages.txt ]; then sudo apt update && sudo apt upgrade -y; sudo xargs apt install -y < packages.txt; fi; python3 -m pip install --upgrade pip setuptools wheel --user; if [ -f requirements.txt ]; then pip3 install --user -r requirements.txt; else pip3 install --user streamlit; fi; pip3 install --user --upgrade pandas>=2.2.3; echo '✅ Packages installed and requirements met successfully.'",
+  "updateContentCommand": "sudo apt update && sudo apt install -y gdal-bin libgdal-dev python3-gdal && export CPLUS_INCLUDE_PATH=/usr/include/gdal && export C_INCLUDE_PATH=/usr/include/gdal && python3 -m pip install --upgrade pip setuptools wheel --user && if [ -f requirements.txt ]; then pip3 install --no-cache-dir --user -r requirements.txt; else pip3 install --user streamlit; fi && pip3 install --user --upgrade pandas rich && echo '✅ System and Python dependencies installed successfully.'",
   "postAttachCommand": {
     "server": "streamlit run app.py --server.enableCORS false --server.enableXsrfProtection false"
   },

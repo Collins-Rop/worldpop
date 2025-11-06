@@ -1,10 +1,9 @@
 import os
 import sys
-from config import *
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import plot.graph_objects as go
+import plotly.graph_objects as go
 
 sys.path.append('src')
 from config import *
@@ -36,7 +35,7 @@ def create_population_pyramid(df, country_code):
     fig = go.Figure()
 
     fig.add_trace(go.Bar(
-        y=male_data['age_label'],
+        y=male_data['age_group_label'],
         x=male_data['population'],
         name='Male',
         orientation='h',
@@ -46,7 +45,7 @@ def create_population_pyramid(df, country_code):
     ))
 
     fig.add_trace(go.Bar(
-        y=female_data['age_label'],
+        y=female_data['age_group_label'],
         x=female_data['population'],
         name='Female',
         orientation='h',
@@ -61,22 +60,27 @@ def create_population_pyramid(df, country_code):
         barmode='overlay',
         bargap=0.1,
         height=600,
-        xaxis_title=dict(text='Population', tickformat=',', tickvals=[-max_pop, -max_pop/2, 0, max_pop/2, max_pop], ticktext=[f"{abs(x/1e6):.1f}M" for x in [-max_pop, -max_pop/2, 0, max_pop/2, max_pop]]),
-        yaxis_title=dict(title='Age Group'),
+        xaxis=dict(
+            title='Population',
+            tickformat=',',
+            tickvals=[-max_pop, -max_pop/2, 0, max_pop/2, max_pop],
+            ticktext=[f"{abs(x/1e6):.1f}M" for x in [-max_pop, -max_pop/2, 0, max_pop/2, max_pop]]
+        ),
+        yaxis_title='Age Group',
         hovermode='y unified',
     )
     return fig
 
 def create_age_distribution_chart(df):
-    age_totals = df.groupby(['age_label', 'age_order'])['population'].sum().reset_index()
+    age_totals = df.groupby(['age_group_label', 'age_order'])['population'].sum().reset_index()
     age_totals = age_totals.sort_values('age_order')
     
     fig = px.bar(
         age_totals,
-        x='age_label',
+        x='age_group_label',
         y='population',
         title='Population Distribution by Age Group',
-        labels={'age_label': 'Age Group', 'population': 'Population'},
+        labels={'age_group_label': 'Age Group', 'population': 'Population'},
         color='population',
         color_continuous_scale='Blues'
     )
@@ -154,10 +158,11 @@ def main():
         col3.metric("Working Age (25-59)", f"{indicators['working_age_pct']:.1f}%", help="Proportion of population aged 25-59 years")
         col4.metric("Elderly (60+)", f"{indicators['elderly_pct']:.1f}%", help="Proportion of population aged 60+ years")
         
-        st.info(f"""Dependency Ratio: {indicators['dependency_ratio']:.1f} This indicates that for every 100 people 
-        of working age (25-59), there are {indicators['dependency_ratio']:.0f} dependents (children and elderly).
-        A lower ratio suggests a larger working-age population relative to dependents.
-        """)
+        if 'dependency_ratio' in indicators:
+            st.info(f"""Dependency Ratio: {indicators['dependency_ratio']:.1f} This indicates that for every 100 people 
+            of working age (25-59), there are {indicators['dependency_ratio']:.0f} dependents (children and elderly).
+            A lower ratio suggests a larger working-age population relative to dependents.
+            """)
     st.header("Visualizations")
     if len(selected_countries) > 0:
         st.subheader("Population Pyramids")
@@ -177,10 +182,13 @@ def main():
         st.plotly_chart(create_sex_comparison_chart(filtered_df), use_container_width=True)
     
     with st.expander("View Raw Data"):
+        display_df = filtered_df[['country_name', 'sex_label', 'age_group_label', 'population']].copy()
+        if 'age_order' in filtered_df.columns:
+            display_df = display_df.assign(age_order=filtered_df['age_order']).sort_values(['country_name', 'age_order', 'sex_label'])
+        else:
+            display_df = display_df.sort_values(['country_name', 'sex_label'])
         st.dataframe(
-            filtered_df[['country_name', 'sex_label', 'age_label', 'population']]
-            .sort_values(['country_name', 'age_order', 'sex'])
-            .reset_index(drop=True),
+            display_df[['country_name', 'sex_label', 'age_group_label', 'population']].reset_index(drop=True),
             use_container_width=True
         )
 

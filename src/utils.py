@@ -26,7 +26,11 @@ def download_file(url: str, output_path: str, force: bool = False) -> bool:
         return False
     
 def get_raster_url(country_code: str, sex: str, age_group: str, base_url: str, resolution_path: str) -> str:
-    filename = f"{sex}_{age_group}.tif"
+    from config import WORLDPOP_AGE_MAPPING
+    age_code = WORLDPOP_AGE_MAPPING.get(age_group, age_group)
+    country_lower = country_code.lower()
+    sex_lower = sex.lower()
+    filename = f"{country_lower}_{sex_lower}_{age_code}_2025_CN_1km_R2025A_UA_v1.tif"
     url = f"{base_url}/{country_code}/v1/{resolution_path}/{filename}"
     return url
 

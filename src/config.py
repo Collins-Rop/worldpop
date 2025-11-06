@@ -1,4 +1,4 @@
-WORLDPOP_BASE_URL = "https://data.worldpop.org/GIS/AgeSex_structures/Global_2015_2030_Constrained/2025"
+WORLDPOP_BASE_URL = "https://data.worldpop.org/GIS/AgeSex_structures/Global_2015_2030/R2025A/2025"
 GADM_BASE_URL = "https://geodata.ucdavis.edu/gadm/gadm4.1/json"
 RESOLUTION_PATH = "1km_ua/constrained"
 CACHE_DIR = "data"
@@ -25,6 +25,26 @@ AGE_GROUP_LABELS = {
     '75_79': '75-79 years',
     '80_plus': '80+ years'
 }
+WORLDPOP_AGE_MAPPING = {
+    '0_4': '00',
+    '5_9': '05',
+    '10_14': '10',
+    '15_19': '15',
+    '20_24': '20',
+    '25_29': '25',
+    '30_34': '30',
+    '35_39': '35',
+    '40_44': '40',
+    '45_49': '45',
+    '50_54': '50',
+    '55_59': '55',
+    '60_64': '60',
+    '65_69': '65',
+    '70_74': '70',
+    '75_79': '75',
+    '80_plus': '80'
+}
+
 HEALTH_CATEGORIES = {
     'Children (0-14)': ['0_4', '5_9', '10_14'],
     'Youth (15-24)': ['15_19', '20_24'],
